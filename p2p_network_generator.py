@@ -6,27 +6,23 @@ from collections import deque
 class Network:
     def __init__(self):
         self.num_peers = 0
-        self.graph = {} # Adjacency list representation: {peer_id: set_of_connected_peers}
+        self.graph = {}
 
     def generate_network(self):
         while True:
             self.num_peers = random.randint(50, 100)
             self.graph = {i: set() for i in range(self.num_peers)}
-            
-            # Attempt to build connections satisfying degree constraints
-            # This is a simplified approach, a more robust method would involve
-            # iterative edge additions with checks.
+
             for i in range(self.num_peers):
-                while len(self.graph[i]) < 3: # Ensure minimum degree
+                while len(self.graph[i]) < 3: 
                     peer_to_connect = random.randint(0, self.num_peers - 1)
                     if peer_to_connect != i and \
                        len(self.graph[peer_to_connect]) < 6 and \
                        peer_to_connect not in self.graph[i]:
                         self.add_connection(i, peer_to_connect)
-            
-            # Now, attempt to add more connections to reach max degree
+        
             for i in range(self.num_peers):
-                while len(self.graph[i]) < random.randint(3, 6): # Try to reach a random degree within range
+                while len(self.graph[i]) < random.randint(3, 6):
                     peer_to_connect = random.randint(0, self.num_peers - 1)
                     if peer_to_connect != i and \
                        len(self.graph[peer_to_connect]) < 6 and \
@@ -44,15 +40,14 @@ class Network:
         self.graph[peer2].add(peer1)
 
     def validate_network(self):
-        # 1. Check Peer Degree
         for peer_id, connections in self.graph.items():
             degree = len(connections)
             if not (3 <= degree <= 6):
                 print(f"Degree violation for peer {peer_id}: {degree}")
                 return False
 
-        # 2. Check Network Connectivity (using BFS)
-        if not self.num_peers: # Handle empty graph case
+    
+        if not self.num_peers:
             return True
 
         start_node = 0
@@ -88,17 +83,8 @@ class Network:
         print(f"Network visualization saved as {filename}")
 
 if __name__ == "__main__":
-    print("Script execution started.") # Added for initial confirmation
+    
     p2p_net = Network()
-    try:
-        print("Attempting to generate network...")
-        p2p_net.generate_network()
+    p2p_net.generate_network()
+    p2p_net.visualize_network()
         
-        print("Network generation complete. Attempting to visualize...")
-        p2p_net.visualize_network()
-        print("Script finished successfully.") # Added for final confirmation
-    except Exception as e:
-        # This will catch any unexpected errors during the process
-        print(f"An unexpected error occurred during execution: {e}")
-        import traceback
-        traceback.print_exc() # This will print the full error stack trace
